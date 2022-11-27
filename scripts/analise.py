@@ -41,16 +41,16 @@ if __name__ == '__main__':
     ]
     
     gisaids = [
-        # "germany_ber",
-        # "england_lond",
         "wuhan",
-        # "taiwan",
+        "taiwan",
+        "england_lond"
+        "germany_ber"
     ]
 
     projects = [
-        # "",
+        "",
         # "LUAD",
-        "COAD"
+        # "COAD"
     ]
     
     for gisaid in gisaids:
@@ -64,21 +64,11 @@ if __name__ == '__main__':
                     path += "_" + protein
                 if not os.path.exists(path):
                     os.makedirs(path)
-                if not os.path.exists(f"{PATH}/align/{gisaid}"):
-                    os.makedirs(f"{PATH}/align/{gisaid}")
                 
-                process_align(
-                    f"{PATH}/gisaid/{gisaid}.fasta",
-                    f"{PATH}/align/{gisaid}",
-                    1
-                )
-
                 process_seeds(
                     f"{PATH}/gisaid/{gisaid}.fasta",
-                    None, # 0.05
                     path,
-                    1, # 60
-                    protein=protein,
-                    miRNA_path=f"{PATH}/miRNA/expressed_{project}.csv",
-                    aln_path=f"{PATH}/align/{gisaid}"
+                    60,
+                    protein=None,
+                    miRNA_path=None
                 )

@@ -16,13 +16,9 @@ PATH_TO_MIRBASE = "/home/dude/huge/bulk/miRBase/miRBase_22.1.tsv"
 MAX_QUEUE_SIZE = 1000
 
 
-def read(qis, path, threshold=None):
+def read(qis, path):
     index = 0
     for covid, rna in read_fasta(path):
-        if not threshold is None:
-            if percent(rna, "N") > threshold:
-                continue
-
         qis[index].put((covid, rna, index))
         index += 1
         if index >= len(qis):
@@ -39,17 +35,17 @@ def clean(qo, path):
 
     ff.close()
 
-def find_seeds(path, qi, miRNAs, protein=None, aln_path=None):
+def find_seeds(path, qi, miRNAs, protein=None):
     _, wuhan = next(read_fasta(WUHAN_PATH))
     ff = open(path, "w")
+    alnpath = "/".join(path.split("/")[:-1])
     while True:
         try:
             covid, rna, index = qi.get(timeout=2)
             align = Align(
                 wuhan,
                 rna,
-                # path=f"{aln_path}/.{index}.align.fasta"
-                path=f"{aln_path}/{covid.lstrip('>')}.fasta"
+                path=f"{alnpath}/.{index}.align.fasta"
             )
 
             if protein:
@@ -80,14 +76,14 @@ def find_seeds(path, qi, miRNAs, protein=None, aln_path=None):
 def find_spaces(path, qi, miRNAs, protein=None, aln_path=None):
     _, wuhan = next(read_fasta(WUHAN_PATH))
     ff = open(path, "w")
+    alnpath = "/".join(path.split("/")[:-1])
     while True:
         try:
             covid, rna, index = qi.get(timeout=2)
             align = Align(
                 wuhan,
                 rna,
-                # path=f"{aln_path}/.{index}.align.fasta"
-                path=f"{aln_path}/{covid.lstrip('>')}.fasta"
+                path=f"{alnpath}/.{index}.align.fasta"
             )
 
             if protein:
@@ -149,12 +145,10 @@ def merge(path, name):
 
 def process_seeds(
     gisaid_path,
-    threshold,
     output_dir,
     process_num,
     protein=None,
     miRNA_path=None,
-    aln_path=None
 ):
     process_num = int(process_num)
     output_dir = output_dir.rstrip("/")
@@ -190,11 +184,11 @@ def process_seeds(
         qis.append(Queue())
         workers.append(Process(target=find_seeds, args=(
             f"{output_dir}/{i}.csv", qis[-1],
-            miRNAs, protein, aln_path
+            miRNAs, protein
         )))
 
     reader = Process(target=read, args=(
-        qis, gisaid_path, threshold,
+        qis, gisaid_path,
     ))
 
     reader.start()
@@ -209,12 +203,10 @@ def process_seeds(
 
 def process_spaces(
     gisaid_path,
-    threshold,
     output_dir,
     process_num,
     protein=None,
     miRNA_path=None,
-    aln_path=None
 ):
     process_num = int(process_num)
     output_dir = output_dir.rstrip("/")
@@ -250,11 +242,11 @@ def process_spaces(
         qis.append(Queue())
         workers.append(Process(target=find_spaces, args=(
             f"{output_dir}/{i}.csv", qis[-1],
-            miRNAs, protein, aln_path
+            miRNAs, protein
         )))
 
     reader = Process(target=read, args=(
-        qis, gisaid_path, threshold,
+        qis, gisaid_path,
     ))
 
     reader.start()
