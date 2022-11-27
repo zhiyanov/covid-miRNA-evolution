@@ -112,5 +112,3 @@ if __name__ == '__main__':
             sum(first_sample) / len(first_sample),
             sum(second_sample) / len(second_sample)
         )
-
-

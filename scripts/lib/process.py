@@ -166,14 +166,11 @@ def process_seeds(
     ff = open(f"{output_dir}/header.csv", "w")
     
     miRBase = pd.read_csv(PATH_TO_MIRBASE, sep="\t")
-    if mimats is None:
-        miRBase = miRBase.loc[miRBase["MIMAT"].str.lstrip("MIMAT").astype("int") <= 5000]
-    else:
+    if mimats:
         miRBase = miRBase.loc[miRBase["MIMAT"].isin(mimats)]
+
     miRNAs = []
     for i, miRNA in miRBase.iterrows():
-        # if (mimats) and (miRNA['MIMAT'] not in mimats):
-        #     continue
         ff.write(f";{miRNA['MIMAT']}")
         seq = uremove(miRNA["Sequence"])
         start = miRNA["Local start"]
@@ -227,15 +224,11 @@ def process_spaces(
     ff = open(f"{output_dir}/header.csv", "w")
     
     miRBase = pd.read_csv(PATH_TO_MIRBASE, sep="\t")
-    if mimats is None:
-        miRBase = miRBase.loc[miRBase["MIMAT"].str.lstrip("MIMAT").astype("int") <= 5000]
-    else:
+    if mimats:
         miRBase = miRBase.loc[miRBase["MIMAT"].isin(mimats)]
 
     miRNAs = []
     for i, miRNA in miRBase.iterrows():
-        # if (mimats) and (miRNA['MIMAT'] not in mimats):
-        #     continue
         ff.write(f";{miRNA['MIMAT']}")
         seq = uremove(miRNA["Sequence"])
         start = miRNA["Local start"]

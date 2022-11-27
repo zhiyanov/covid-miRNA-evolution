@@ -18,19 +18,18 @@ def condition(description):
     #     return False
     # if not ("lond" in description):
     #     return False
-    if not ("germany" in description):
+    # if not ("germany" in description):
+    #     return False
+    # if not ("/be-" in description):
+    #     return False
+    if not ("taiwan" in description):
         return False
-    if not ("/be-" in description):
-        return False
-
     return True
 
 if __name__ == '__main__':
     gisaid_path = sys.argv[1]
 
-    for description, rna in read_fasta(gisaid_path):
+    for description, rna in tqdm.tqdm(read_fasta(gisaid_path), total=12962156):
         if condition(description):
             print(description)
             print(rna)
-
-

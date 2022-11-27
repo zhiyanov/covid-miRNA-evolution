@@ -79,9 +79,3 @@ for protein, region in tqdm.tqdm(ANNOTATION.items()):
         protein_df = protein_df.rename(columns={0: "protein"})
 
 result_df = rna_df.join(protein_df, how="inner")
-result_df.to_csv("tmp.tsv", sep="\t")
-    
-
-
-
-
