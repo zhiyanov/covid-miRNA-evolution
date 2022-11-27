@@ -1,6 +1,7 @@
 import sys
 
 from lib.process import *
+from lib.process import *
 from lib.utils import *
 
 PATH = "/home/dude/huge/dude/long-covid"
@@ -48,9 +49,9 @@ if __name__ == '__main__':
     ]
 
     projects = [
-        "",
+        # "",
         # "LUAD",
-        # "COAD"
+        "COAD"
     ]
     
     for gisaid in gisaids:
@@ -64,14 +65,21 @@ if __name__ == '__main__':
                     path += "_" + protein
                 if not os.path.exists(path):
                     os.makedirs(path)
-            
-                # process_spaces(
+                if not os.path.exists(f"{PATH}/align/{gisaid}"):
+                    os.makedirs(f"{PATH}/align/{gisaid}")
+                
+                process_align(
+                    f"{PATH}/gisaid/{gisaid}.fasta",
+                    f"{PATH}/align/{gisaid}",
+                    1
+                )
+
                 process_seeds(
                     f"{PATH}/gisaid/{gisaid}.fasta",
                     None, # 0.05
                     path,
-                    # 60,
-                    1,
-                    protein,
-                    # f"{PATH}/miRNA/expressed_{project}.csv"
+                    1, # 60
+                    protein=protein,
+                    miRNA_path=f"{PATH}/miRNA/expressed_{project}.csv",
+                    aln_path=f"{PATH}/align/{gisaid}"
                 )

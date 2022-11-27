@@ -58,3 +58,10 @@ def percent(seq, chr="N"):
         if char == chr:
             count += 1
     return count / len(seq)
+
+def region_count(regions):
+    count = regions.count(",")
+    if count > 0:
+        return count + 1
+    return count
+

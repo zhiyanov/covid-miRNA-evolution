@@ -4,6 +4,7 @@ import os
 from Bio.Seq import Seq
 from Bio.Align.Applications import MafftCommandline
 
+from .align import *
 from .utils import read_fasta
 
 WUHAN_PATH = "/home/dude/huge/dude/long-covid/gisaid/wuhan.fasta"
@@ -40,88 +41,6 @@ WUHAN_PROTEINS = {
     "3P": "29534-30331"
 }
 
-def region_count(regions):
-    count = regions.count(",")
-    if count > 0:
-        return count + 1
-    return count
-
-class Align:
-    def __init__(self, ref, aln, path=None):
-        self.ref = ref
-        self.aln = aln
-
-        _ref, _aln = align(ref, aln, path)
-        self._ref = _ref
-        self._aln = _aln
-    
-    def ref_transform(self, positions):
-        frw = forward(self._ref) 
-        bcw = backward(self._aln)
-        
-        result = []
-        for pos in positions:
-            result.append(bcw[frw[pos]])
-        return result
-    
-    def aln_transform(self, positions):
-        frw = forward(self._aln) 
-        bcw = backward(self._ref)
-        
-        result = []
-        for pos in positions:
-            result.append(bcw[frw[pos]])
-        return result
-
-def align(first, second, path=None):
-    if not path:
-        path = ".align.fasta"
-
-    alnf = open(path, "w")
-    alnf.write(">first\n" + first + "\n")
-    alnf.write(">second\n" + second + "\n")
-    alnf.close()
-
-    mafft_cline = MafftCommandline(input=path)
-    stdout, stderr = mafft_cline()
-
-    outf = open(path, "w")
-    outf.write(stdout)
-    outf.close()
-    
-    reader = read_fasta(path)
-    _, first = next(reader)
-    _, second = next(reader)
-    
-    os.remove(path)
-    return first.upper(), second.upper()
-
-def forward(seq):
-    # returns coordinates on aln seq
-    coord = {}
-    i = 0
-    for j in range(len(seq)):
-        if seq[j] == "-":
-            continue
-        else:
-            coord[i] = j
-            i += 1
-
-    return coord
-
-def backward(seq):
-    # returns coordinates on ref seq
-    coord = {}
-    i = 0
-    for j in range(len(seq)):
-        coord[j] = i
-        if seq[j] == "-":
-            continue
-        else:
-            i += 1
-
-    return coord
-        
 def annotate(seq, path=None):
     _, wuhan = next(read_fasta(WUHAN_PATH))
     ref, aln = align(wuhan, seq, path=path)

@@ -10,6 +10,7 @@ from multiprocessing import Process, Queue
 
 from .utils import *
 from .annotate import *
+from .align import *
 
 PATH_TO_MIRBASE = "/home/dude/huge/bulk/miRBase/miRBase_22.1.tsv"
 MAX_QUEUE_SIZE = 1000
@@ -38,17 +39,17 @@ def clean(qo, path):
 
     ff.close()
 
-def find_seeds(path, qi, miRNAs, protein=None):
+def find_seeds(path, qi, miRNAs, protein=None, aln_path=None):
     _, wuhan = next(read_fasta(WUHAN_PATH))
     ff = open(path, "w")
-    alnpath = "/".join(path.split("/")[:-1])
     while True:
         try:
             covid, rna, index = qi.get(timeout=2)
             align = Align(
                 wuhan,
                 rna,
-                path=f"{alnpath}/.{index}.align.fasta"
+                # path=f"{aln_path}/.{index}.align.fasta"
+                path=f"{aln_path}/{covid.lstrip('>')}.fasta"
             )
 
             if protein:
@@ -76,17 +77,17 @@ def find_seeds(path, qi, miRNAs, protein=None):
             break
     ff.close()
 
-def find_spaces(path, qi, miRNAs, protein=None):
+def find_spaces(path, qi, miRNAs, protein=None, aln_path=None):
     _, wuhan = next(read_fasta(WUHAN_PATH))
     ff = open(path, "w")
-    alnpath = "/".join(path.split("/")[:-1])
     while True:
         try:
             covid, rna, index = qi.get(timeout=2)
             align = Align(
                 wuhan,
                 rna,
-                path=f"{alnpath}/.{index}.align.fasta"
+                # path=f"{aln_path}/.{index}.align.fasta"
+                path=f"{aln_path}/{covid.lstrip('>')}.fasta"
             )
 
             if protein:
@@ -152,7 +153,8 @@ def process_seeds(
     output_dir,
     process_num,
     protein=None,
-    miRNA_path=None
+    miRNA_path=None,
+    aln_path=None
 ):
     process_num = int(process_num)
     output_dir = output_dir.rstrip("/")
@@ -187,7 +189,8 @@ def process_seeds(
         # qis.append(Queue(MAX_QUEUE_SIZE))
         qis.append(Queue())
         workers.append(Process(target=find_seeds, args=(
-            f"{output_dir}/{i}.csv", qis[-1], miRNAs, protein,
+            f"{output_dir}/{i}.csv", qis[-1],
+            miRNAs, protein, aln_path
         )))
 
     reader = Process(target=read, args=(
@@ -210,7 +213,8 @@ def process_spaces(
     output_dir,
     process_num,
     protein=None,
-    miRNA_path=None
+    miRNA_path=None,
+    aln_path=None
 ):
     process_num = int(process_num)
     output_dir = output_dir.rstrip("/")
@@ -245,7 +249,8 @@ def process_spaces(
         # qis.append(Queue(MAX_QUEUE_SIZE))
         qis.append(Queue())
         workers.append(Process(target=find_spaces, args=(
-            f"{output_dir}/{i}.csv", qis[-1], miRNAs, protein,
+            f"{output_dir}/{i}.csv", qis[-1],
+            miRNAs, protein, aln_path
         )))
 
     reader = Process(target=read, args=(
