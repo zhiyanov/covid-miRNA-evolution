@@ -1,7 +1,6 @@
 import sys
 
-from lib.process import *
-from lib.process import *
+from lib.analise import *
 from lib.utils import *
 
 PATH = "/home/dude/huge/dude/long-covid"
