@@ -27,6 +27,7 @@ class Align:
         self.aln_bcw = backward(self._aln)
     
     def ref_transform(self, positions):
+        # ref coords to aln coords
         frw = self.ref_frw
         bcw = self.aln_bcw
         
@@ -36,6 +37,7 @@ class Align:
         return result
     
     def aln_transform(self, positions):
+        # aln coords to ref coords
         frw = self.aln_frw
         bcw = self.ref_bcw
         

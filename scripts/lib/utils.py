@@ -1,4 +1,5 @@
 import re
+import io
 
 
 def find_all(seq, ref):
@@ -26,8 +27,10 @@ def read_fasta(path):
             result += line
 
         line = next(ff, None)
+    
+    if description and result:
+        yield description, result
 
-    yield description, result
     ff.close()
 
 def reverse(seq):

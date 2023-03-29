@@ -1,6 +1,6 @@
 import sys
 
-from lib.analise import *
+from lib.locate import *
 from lib.utils import *
 
 PATH = "/home/dude/huge/dude/long-covid"
@@ -42,9 +42,9 @@ if __name__ == '__main__':
     
     gisaids = [
         "wuhan",
-        "taiwan",
-        "england_lond"
-        "germany_ber"
+        "germany_ber",
+        "england_lond",
+        "taiwan"
     ]
 
     projects = [

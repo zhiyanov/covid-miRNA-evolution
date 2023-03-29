@@ -29,7 +29,7 @@ def condition(description):
 if __name__ == '__main__':
     gisaid_path = sys.argv[1]
 
-    for description, rna in tqdm.tqdm(read_fasta(gisaid_path), total=12962156):
+    for description, rna in tqdm.tqdm(read_fasta(gisaid_path), total=16962156):
         if condition(description):
             print(description)
             print(rna)

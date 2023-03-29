@@ -3,5 +3,9 @@ gisaid
 pictures
 miRNA
 align
+*.fasta
+*.csv
+*.tsv
+*.txt
 *__pycache__*
 *ipynb_checkpoints*
